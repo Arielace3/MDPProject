@@ -73,6 +73,12 @@ public class BluetoothConnection extends AppCompatActivity {
         Button btnONOFF = findViewById(R.id.btnONOFF);
         bluetoothStatus = findViewById(R.id.bluetoothStatus);
 
+        Map map = findViewById(R.id.map);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Register BroadcastReceiver
