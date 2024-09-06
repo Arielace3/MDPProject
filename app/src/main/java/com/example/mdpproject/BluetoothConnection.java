@@ -71,7 +71,7 @@ public class BluetoothConnection extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button btnONOFF = findViewById(R.id.btnONOFF);
-        bluetoothStatus = findViewById(R.id.bluetoothStatus);
+//        bluetoothStatus = findViewById(R.id.bluetoothStatus);
 
         Map map = findViewById(R.id.map);
 
