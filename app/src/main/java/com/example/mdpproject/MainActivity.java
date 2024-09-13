@@ -1,80 +1,84 @@
 package com.example.mdpproject;
 
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
+import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
-public class MainActivity extends AppCompatActivity{
+import com.google.android.material.tabs.TabLayout;
 
-    private static ImageView robot;
-    private static Map map;
-    private static int rotation = 0;
+import java.util.UUID;
+
+public class MainActivity extends AppCompatActivity {
+
+    final Handler handler = new Handler();
+    // Declaration Variables
+    private static SharedPreferences sharedPreferences;
+    private static SharedPreferences.Editor editor;
+    private static Context context;
+
+    private static GridMap gridMap;
+    static TextView xAxisTextView, yAxisTextView, directionAxisTextView;
+    static TextView robotStatusTextView, bluetoothStatus, bluetoothDevice;
+    static ImageButton upBtn, downBtn, leftBtn, rightBtn,bleftBtn,brightBtn;
+
+    BluetoothDevice mBTDevice;
+    private static UUID myUUID;
+    ProgressDialog myDialog;
+    Bitmap bm, mapscalable;
+    String obstacleID;
+
+    private static final String TAG = "Main Activity";
+    public static boolean stopTimerFlag = false;
+    public static boolean stopWk9TimerFlag = false;
+
+    public static boolean trackRobot = true;
+
+    private int g_coordX;
+    private int g_coordY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Initialization
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
-        ImageButton forwardButton = (ImageButton) findViewById(R.id.arrowForward);
-        ImageButton rightButton = (ImageButton) findViewById(R.id.arrowRight);
-        ImageButton leftButton = (ImageButton) findViewById(R.id.arrowLeft);
+        SectionsPagerAdapter sectionsPagerAdapter2 = new SectionsPagerAdapter(getSupportFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
+//        Homepage, Top of page, Bluetooth, Map. Add obstacle
+        sectionsPagerAdapter2.addFragment(new BluetoothSetUp(),"Bluetooth");
+        sectionsPagerAdapter2.addFragment(new Home(),"Map");
+
+        sectionsPagerAdapter2.addFragment(new EmergencyFragment(),"Add Obstacle");
+
+        ViewPager viewPager2 = findViewById(R.id.view_pager2);
+        viewPager2.setAdapter(sectionsPagerAdapter2);
+        viewPager2.setOffscreenPageLimit(2);
 
 
-        View.OnClickListener movementOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (robot.getVisibility() == View.INVISIBLE) {
-                    return;
-                }
-                String instruction = "_";
+        TabLayout tabs2 = findViewById(R.id.tabs2);
+        tabs2.setupWithViewPager(viewPager2);
 
-                //constant expression issue, not sure why
-//                switch (view.getId()) {
-//                    case R.id.arrowForward:
-                          masterRobotMovement(Constants.UP);
-//                        instruction = "f";
-//                        break;
-//                    case R.id.arrowRight:
-                          masterRobotMovement(Constants.RIGHT);
-//                        instruction = "r";
-//                        break;
-//                    case R.id.arrowLeft:
-                          masterRobotMovement(Constants.LEFT);
-//                        instruction = "l";
-//                        break;
-//                }
-
-                // Send the instruction via Bluetooth
-
-            }
-        };
-
-        forwardButton.setOnClickListener(movementOnClickListener);
-        rightButton.setOnClickListener(movementOnClickListener);
-        leftButton.setOnClickListener(movementOnClickListener);
-
-        //ROBOT settings - KEEP IT INVISIBLE AT FIRST
-//        robot = (ImageView) findViewById(R.id.robotcar);
-//
-//        if (map.getCanDrawRobot()) {
-//            robot.setVisibility(View.VISIBLE);
-//            rotation = map.convertFacingToRotation(map.getRobotFacing());
-//            trackRobot();
-//        } else {
-//            robot.setVisibility(View.INVISIBLE);
-//        }
-    }
-
-    private void trackRobot() {
-    }
+        // Set up sharedPreferences
+        MainActivity.context = getApplicationContext();
 
 
-    private void masterRobotMovement(String direction) {
-        //various robot movements
     }
 
 
